@@ -1,9 +1,10 @@
-import axios from "axios";
 import { useForm } from "react-hook-form";
 import { Navigate } from "react-router-dom";
+import useAxiosInstance from "@hooks/useAxiosInstance";
 
 
 function TodoAdd() {
+  const axios = useAxiosInstance();
   const { register, handleSubmit, reset, setFocus } = useForm({
     title: "",
     content: "",
