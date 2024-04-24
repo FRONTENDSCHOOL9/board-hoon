@@ -1,30 +1,48 @@
+import TodoListItem from "@pages/TodoListItem";
+import { useEffect } from "react";
+import { useState } from "react";
+import useAxiosInstance from "../hooks/useAxiosInstance";
+
+
 function TodoList() {
+  const axios = useAxiosInstance();
+  // API 서버 호출
+  const [items, setItems] = useState();
+  const fetchList = async () => {
+    const response = await axios.get("/todolist");
+    setItems(response.data.items);
+  };
+
+  useEffect(() => {
+    fetchList();
+  }, []);
+
+  const handleDelete = async _id => {
+    try{
+      await axios.delete(`/todolist/${_id}`);
+      alert('할일이 삭제 되었습니다.');
+      fetchList();
+    }catch(err){
+      console.error(err);
+      alert('할일 삭제에 실패했습니다.');
+    }
+  }
+  // 할일 목록 구성
+  const itemList = items?.map(item => <TodoListItem key={ item._id } item={ item } handleDelete={ handleDelete }/>);
+
   return (
     <div id="main">
       <h2>할일 목록</h2>
       <div className="todo">
-        <a href="./todoadd.html">추가</a>
+        <a href="/add">추가</a>
         <br />
         <div className="search">
           <input type="text" autoFocus />
           <button type="button">검색</button>
         </div>
         <ul className="todolist">
-          <li>
-            <span>1</span>
-            <a href="./tododetail.html"><s>듄2 보기</s></a>
-            <a href="./todolist.html">삭제</a>
-          </li>
-          <li>
-            <span>2</span>
-            <a href="./tododetail.html">10시간 잠자기</a>
-            <a href="./todolist.html">삭제</a>
-          </li>
-          <li>
-            <span>3</span>
-            <a href="./tododetail.html">리액트 과제 하기</a>
-            <a href="./todolist.html">삭제</a>
-          </li>
+          {/* 할일 목록 출력 */}
+          {itemList}
         </ul>
       </div>
     </div>
